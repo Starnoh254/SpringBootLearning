@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,8 +20,12 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userRepository.save(user);
+    public ResponseEntity<?> createUser(@RequestBody User user) {
+
+        if(userRepository.existsByEmail(user.getEmail())){
+            return ResponseEntity.badRequest().body("Email already exists.");
+        }
+        return ResponseEntity.ok(userRepository.save(user));
     }
 
     @PutMapping("/{id}")
